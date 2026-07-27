@@ -13,7 +13,7 @@ logging.basicConfig(
 )
 log = logging.getLogger("ynet-groupme")
 
-RSS_URL = os.environ.get("RSS_URL", "http://www.ynet.co.il/Integration/StoryRss1854.xml")
+RSS_URL = os.environ.get("RSS_URL", "https://www.ynet.co.il/Integration/StoryRss1854.xml")
 GROUPME_BOT_ID = os.environ["GROUPME_BOT_ID"]          # required
 POLL_SECONDS = int(os.environ.get("POLL_SECONDS", "60"))
 STATE_FILE = os.environ.get("STATE_FILE", "/data/seen.json")  # mount a Railway volume at /data
@@ -56,9 +56,11 @@ def entry_key(entry):
 
 def format_message(entry):
     title = entry.get("title", "").strip()
-    link = entry.get("link", "").strip()
-    if link:
-        return f"{title}\n{link}"
+    # RSS <description> maps to entry.summary in feedparser; this is the fuller
+    # blurb/expanded text Ynet includes, separate from the bare headline.
+    summary = entry.get("summary", "").strip()
+    if summary and summary != title:
+        return f"{title}\n\n{summary}"
     return title
 
 
@@ -73,8 +75,9 @@ def poll_once(seen, first_run):
 
     new_entries = [e for e in entries if entry_key(e) not in seen]
 
-    if first_run:
-        # don't spam the group with the entire feed history on first deploy
+    # Always cap how many go out in a single cycle — protects against floods
+    # from a stale/partial seen.json, not just a genuine first run.
+    if first_run or len(new_entries) > MAX_BACKFILL:
         new_entries = new_entries[-MAX_BACKFILL:]
 
     for entry in new_entries:
@@ -101,5 +104,6 @@ def main():
         time.sleep(POLL_SECONDS)
 
 
-if __name__ == "__main__":
+if __name__ =
+    = "__main__":
     main()
