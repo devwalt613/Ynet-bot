@@ -55,13 +55,7 @@ def entry_key(entry):
 
 
 def format_message(entry):
-    title = entry.get("title", "").strip()
-    # RSS <description> maps to entry.summary in feedparser; this is the fuller
-    # blurb/expanded text Ynet includes, separate from the bare headline.
-    summary = entry.get("summary", "").strip()
-    if summary and summary != title:
-        return f"{title}\n\n{summary}"
-    return title
+    return entry.get("title", "").strip()
 
 
 def poll_once(seen, first_run):
