@@ -13,7 +13,7 @@ logging.basicConfig(
 )
 log = logging.getLogger("ynet-groupme")
 
-RSS_URL = os.environ.get("RSS_URL", "http://www.ynet.co.il/Integration/StoryRss3254.xml")
+RSS_URL = os.environ.get("RSS_URL", "http://www.ynet.co.il/Integration/StoryRss1854.xml")
 GROUPME_BOT_ID = os.environ["GROUPME_BOT_ID"]          # required
 POLL_SECONDS = int(os.environ.get("POLL_SECONDS", "60"))
 STATE_FILE = os.environ.get("STATE_FILE", "/data/seen.json")  # mount a Railway volume at /data
