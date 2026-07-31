@@ -106,18 +106,15 @@ def fetch_messages():
         text_divs = block.select("div.tgme_widget_message_text")
         text_div = text_divs[-1] if text_divs else None
 
-        # Preserve bold text from the original Telegram message. Telegram
-        # renders bold as <b>/<strong> tags; GroupMe's official app renders
-        # *word* wrapped in single asterisks as bold, so convert one to the
-        # other before stripping tags down to plain text.
+        # NOTE: GroupMe's official app has no Markdown/bold-text support in
+        # message bodies — *word* is just displayed as literal asterisks.
+        # So we don't try to preserve Telegram's bold formatting; just pull
+        # the plain text.
         if text_div:
-            for bold_tag in text_div.select("b, strong"):
-                bold_tag.insert_before("*")
-                bold_tag.insert_after("*")
             text = text_div.get_text("\n", strip=True)
         else:
             text = ""
-
+            
         link_tag = block.select_one("a.tgme_widget_message_date")
         link = link_tag["href"] if link_tag and link_tag.get("href") else f"https://t.me/{post_id}"
 
